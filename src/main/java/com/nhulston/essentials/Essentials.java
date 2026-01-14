@@ -23,6 +23,7 @@ import com.nhulston.essentials.events.SpawnProtectionEvent;
 import com.nhulston.essentials.events.SpawnRegionTitleEvent;
 import com.nhulston.essentials.events.SpawnTeleportEvent;
 import com.nhulston.essentials.events.TeleportMovementEvent;
+import com.nhulston.essentials.events.UpdateNotifyEvent;
 import com.nhulston.essentials.managers.BackManager;
 import com.nhulston.essentials.managers.ChatManager;
 import com.nhulston.essentials.managers.HomeManager;
@@ -35,10 +36,13 @@ import com.nhulston.essentials.managers.WarpManager;
 import com.nhulston.essentials.util.ConfigManager;
 import com.nhulston.essentials.util.StorageManager;
 import com.nhulston.essentials.util.Log;
+import com.nhulston.essentials.util.VersionChecker;
 
 import javax.annotation.Nonnull;
 
 public class Essentials extends JavaPlugin {
+    public static final String VERSION = "1.2.1";
+    
     private ConfigManager configManager;
     private StorageManager storageManager;
     private HomeManager homeManager;
@@ -50,6 +54,7 @@ public class Essentials extends JavaPlugin {
     private TeleportManager teleportManager;
     private KitManager kitManager;
     private BackManager backManager;
+    private VersionChecker versionChecker;
 
     public Essentials(@Nonnull JavaPluginInit init) {
         super(init);
@@ -72,13 +77,18 @@ public class Essentials extends JavaPlugin {
         teleportManager = new TeleportManager(configManager);
         kitManager = new KitManager(getDataDirectory(), storageManager);
         backManager = new BackManager();
+        versionChecker = new VersionChecker(VERSION);
     }
 
     @Override
     protected void start() {
         registerCommands();
         registerEvents();
-        Log.info("Essentials started successfully!");
+        
+        // Check for updates asynchronously
+        versionChecker.checkForUpdatesAsync();
+        
+        Log.info("Essentials v" + VERSION + " started successfully!");
     }
 
     @Override
@@ -145,5 +155,8 @@ public class Essentials extends JavaPlugin {
 
         // MOTD on join
         new MotdEvent(configManager).register(getEventRegistry());
+
+        // Update notification for admins
+        new UpdateNotifyEvent(versionChecker).register(getEventRegistry());
     }
 }
