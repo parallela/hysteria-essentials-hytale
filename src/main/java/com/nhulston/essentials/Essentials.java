@@ -18,6 +18,7 @@ import com.nhulston.essentials.commands.warp.WarpCommand;
 import com.nhulston.essentials.events.BuildProtectionEvent;
 import com.nhulston.essentials.events.ChatEvent;
 import com.nhulston.essentials.events.DeathLocationEvent;
+import com.nhulston.essentials.events.MotdEvent;
 import com.nhulston.essentials.events.SpawnProtectionEvent;
 import com.nhulston.essentials.events.SpawnRegionTitleEvent;
 import com.nhulston.essentials.events.SpawnTeleportEvent;
@@ -141,5 +142,8 @@ public class Essentials extends JavaPlugin {
 
         // Death location tracking for /back
         new DeathLocationEvent(backManager).register(getEntityStoreRegistry());
+
+        // MOTD on join
+        new MotdEvent(configManager).register(getEventRegistry());
     }
 }

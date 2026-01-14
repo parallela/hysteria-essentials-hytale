@@ -57,6 +57,10 @@ public class ConfigManager {
     private int rtpRadius = DEFAULT_RTP_RADIUS;
     private int rtpCooldown = DEFAULT_RTP_COOLDOWN;
 
+    // MOTD settings
+    private boolean motdEnabled = true;
+    private String motdMessage = "&6Welcome to the server, &e%player%&6!";
+
     public ConfigManager(@Nonnull Path dataFolder) {
         this.configPath = dataFolder.resolve("config.toml");
         load();
@@ -123,6 +127,10 @@ public class ConfigManager {
             rtpWorld = config.getString("rtp.world", () -> DEFAULT_RTP_WORLD);
             rtpRadius = Math.toIntExact(config.getLong("rtp.radius", () -> (long) DEFAULT_RTP_RADIUS));
             rtpCooldown = Math.toIntExact(config.getLong("rtp.cooldown", () -> (long) DEFAULT_RTP_COOLDOWN));
+
+            // MOTD config
+            motdEnabled = config.getBoolean("motd.enabled", () -> true);
+            motdMessage = config.getString("motd.message", () -> "&6Welcome to the server, &e%player%&6!");
 
             Log.info("Config loaded!");
         } catch (IOException e) {
@@ -242,5 +250,14 @@ public class ConfigManager {
 
     public int getRtpCooldown() {
         return rtpCooldown;
+    }
+
+    public boolean isMotdEnabled() {
+        return motdEnabled;
+    }
+
+    @Nonnull
+    public String getMotdMessage() {
+        return motdMessage;
     }
 }

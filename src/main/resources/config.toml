@@ -75,6 +75,17 @@ enter-subtitle = "This is a protected area"
 exit-title = "Leaving Spawn"
 exit-subtitle = "You can now build"
 
+[motd]
+# Message of the day shown to players on join
+# Placeholders: %player% = player name
+# Color codes: &0-&9, &a-&f (hex colors like &#FF5555 also supported)
+# Use triple quotes for multi-line messages
+enabled = true
+message = """
+&6Welcome to the server, &e%player%&6!
+&7Type &f/help &7for a list of commands.
+"""
+
 [rtp]
 # Random teleport settings
 
