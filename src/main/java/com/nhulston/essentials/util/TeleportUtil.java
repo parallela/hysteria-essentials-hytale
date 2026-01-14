@@ -1,5 +1,6 @@
 package com.nhulston.essentials.util;
 
+import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
@@ -10,6 +11,8 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+
+import com.nhulston.essentials.models.Spawn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,6 +79,55 @@ public final class TeleportUtil {
         // Teleport the player
         Teleport teleport = new Teleport(targetWorld, targetPos, new Vector3f(0, 0, 0));
         playerStore.putComponent(playerRef, Teleport.getComponentType(), teleport);
+    }
 
+    /**
+     * Teleports a player to spawn.
+     *
+     * @param player The player to teleport
+     * @param spawn The spawn location
+     * @return null if successful, error message if failed
+     */
+    @Nullable
+    public static String teleportToSpawn(@Nonnull PlayerRef player, @Nonnull Spawn spawn) {
+        Ref<EntityStore> playerRef = player.getReference();
+        if (playerRef == null || !playerRef.isValid()) {
+            return "Player reference is invalid.";
+        }
+
+        World targetWorld = Universe.get().getWorld(spawn.getWorld());
+        if (targetWorld == null) {
+            return "World '" + spawn.getWorld() + "' is not loaded.";
+        }
+
+        Store<EntityStore> store = playerRef.getStore();
+        Vector3d position = new Vector3d(spawn.getX(), spawn.getY(), spawn.getZ());
+        Vector3f rotation = new Vector3f(spawn.getPitch(), spawn.getYaw(), 0.0F);
+
+        Teleport teleport = new Teleport(targetWorld, position, rotation);
+        store.putComponent(playerRef, Teleport.getComponentType(), teleport);
+        return null;
+    }
+
+    /**
+     * Teleports a player to spawn using a CommandBuffer (for use within systems).
+     *
+     * @param ref The entity reference
+     * @param buffer The command buffer to queue the teleport
+     * @param spawn The spawn location
+     */
+    public static void teleportToSpawnBuffered(@Nonnull Ref<EntityStore> ref,
+                                               @Nonnull CommandBuffer<EntityStore> buffer,
+                                               @Nonnull Spawn spawn) {
+        World targetWorld = Universe.get().getWorld(spawn.getWorld());
+        if (targetWorld == null) {
+            return;
+        }
+
+        Vector3d position = new Vector3d(spawn.getX(), spawn.getY(), spawn.getZ());
+        Vector3f rotation = new Vector3f(spawn.getPitch(), spawn.getYaw(), 0.0F);
+
+        Teleport teleport = new Teleport(targetWorld, position, rotation);
+        buffer.putComponent(ref, Teleport.getComponentType(), teleport);
     }
 }

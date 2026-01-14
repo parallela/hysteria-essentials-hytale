@@ -16,6 +16,7 @@ import com.nhulston.essentials.events.BuildProtectionEvent;
 import com.nhulston.essentials.events.ChatEvent;
 import com.nhulston.essentials.events.SpawnProtectionEvent;
 import com.nhulston.essentials.events.SpawnRegionTitleEvent;
+import com.nhulston.essentials.events.SpawnTeleportEvent;
 import com.nhulston.essentials.managers.ChatManager;
 import com.nhulston.essentials.managers.HomeManager;
 import com.nhulston.essentials.managers.SpawnManager;
@@ -105,5 +106,9 @@ public class Essentials extends JavaPlugin {
         new BuildProtectionEvent(configManager).register(getEntityStoreRegistry());
         new SpawnProtectionEvent(spawnProtectionManager).register(getEntityStoreRegistry());
         new SpawnRegionTitleEvent(spawnProtectionManager, configManager).register(getEntityStoreRegistry());
+
+        SpawnTeleportEvent spawnTeleportEvent = new SpawnTeleportEvent(spawnManager, configManager, storageManager);
+        spawnTeleportEvent.registerEvents(getEventRegistry());
+        spawnTeleportEvent.registerSystems(getEntityStoreRegistry());
     }
 }

@@ -97,6 +97,15 @@ public class StorageManager {
         cache.remove(playerUuid);
     }
 
+    /**
+     * Checks if a player has joined the server before (player data file exists).
+     */
+    public boolean hasPlayerJoined(@Nonnull UUID playerUuid) {
+        Path playerFile = getPlayerFile(playerUuid);
+        boolean exists = Files.exists(playerFile);
+        return exists;
+    }
+
     // Warp methods
     @Nonnull
     public Map<String, Warp> getWarps() {
