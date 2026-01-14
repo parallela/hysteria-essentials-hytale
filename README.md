@@ -16,6 +16,8 @@ Essentials is an all-in-one utility plugin for Hytale server administrators.
 
 ![Chat Format](https://raw.githubusercontent.com/nhulston/Essentials/refs/heads/main/images/chatformat.png) ![Chat Format2](https://raw.githubusercontent.com/nhulston/Essentials/refs/heads/main/images/chatformat2.png)
 
+![Kits](https://raw.githubusercontent.com/nhulston/Essentials/refs/heads/main/images/kits.png)
+
 # Commands
 
 | Command                  | Description                      | Permission                         |
