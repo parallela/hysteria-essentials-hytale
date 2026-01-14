@@ -149,7 +149,8 @@ public final class TeleportUtil {
 
     /**
      * Teleports a player to spawn using a CommandBuffer (for use within systems).
-     * Finds a safe Y position if needed.
+     * Does NOT perform safe Y calculation as that can trigger chunk loading during store processing.
+     * Spawn should be set to a safe location by admins.
      *
      * @param ref The entity reference
      * @param buffer The command buffer to queue the teleport
@@ -163,10 +164,9 @@ public final class TeleportUtil {
             return;
         }
 
-        // Find safe Y position
-        double safeY = findSafeY(targetWorld, spawn.getX(), spawn.getY(), spawn.getZ());
-
-        Vector3d position = new Vector3d(spawn.getX(), safeY, spawn.getZ());
+        // Use spawn coordinates directly - no safe Y check as it can trigger chunk loading
+        // during store processing which causes IllegalStateException
+        Vector3d position = new Vector3d(spawn.getX(), spawn.getY(), spawn.getZ());
         Vector3f rotation = new Vector3f(spawn.getPitch(), spawn.getYaw(), 0.0F);
 
         Teleport teleport = new Teleport(targetWorld, position, rotation);
