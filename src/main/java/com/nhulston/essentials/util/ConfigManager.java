@@ -25,6 +25,9 @@ public class ConfigManager {
     private String chatFallbackFormat = DEFAULT_CHAT_FORMAT;
     private final LinkedHashMap<String, String> chatFormats = new LinkedHashMap<>();
 
+    // Build settings
+    private boolean disableBuilding = false;
+
     // Spawn protection settings
     private boolean spawnProtectionEnabled = true;
     private int spawnProtectionRadius = DEFAULT_SPAWN_PROTECTION_RADIUS;
@@ -74,6 +77,9 @@ public class ConfigManager {
                     }
                 }
             }
+
+            // Build config
+            disableBuilding = config.getBoolean("build.disable-building", () -> false);
 
             // Spawn protection config
             spawnProtectionEnabled = config.getBoolean("spawn-protection.enabled", () -> true);
@@ -129,6 +135,10 @@ public class ConfigManager {
     @Nonnull
     public Map<String, String> getChatFormats() {
         return chatFormats;
+    }
+
+    public boolean isBuildingDisabled() {
+        return disableBuilding;
     }
 
     public boolean isSpawnProtectionEnabled() {

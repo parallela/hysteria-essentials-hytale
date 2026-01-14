@@ -22,8 +22,14 @@ OP = "&0[&cAdmin&0] &c%player%&f: %message%"
 Adventure = "&0[&fPlayer&0] &f%player%: %message%"
 Default = "&0[&fPlayer&0] &f%player%: %message%"
 
+[build]
+# Disable building everywhere (useful for PvP arenas, hub servers)
+# Players with essentials.build.bypass permission can still build
+disable-building = false
+
 [spawn-protection]
 # Enable spawn protection (prevents block breaking/placing/damage)
+# Players with essentials.spawn.bypass permission can still build
 enabled = true
 
 # Radius (in blocks) around spawn point to protect

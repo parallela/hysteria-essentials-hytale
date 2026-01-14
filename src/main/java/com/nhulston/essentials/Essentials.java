@@ -10,6 +10,7 @@ import com.nhulston.essentials.commands.spawn.SpawnCommand;
 import com.nhulston.essentials.commands.warp.DelWarpCommand;
 import com.nhulston.essentials.commands.warp.SetWarpCommand;
 import com.nhulston.essentials.commands.warp.WarpCommand;
+import com.nhulston.essentials.events.BuildProtectionEvent;
 import com.nhulston.essentials.events.ChatEvent;
 import com.nhulston.essentials.events.SpawnProtectionEvent;
 import com.nhulston.essentials.events.SpawnRegionTitleEvent;
@@ -88,6 +89,7 @@ public class Essentials extends JavaPlugin {
 
     private void registerEvents() {
         new ChatEvent(chatManager).register(getEventRegistry());
+        new BuildProtectionEvent(configManager).register(getEntityStoreRegistry());
         new SpawnProtectionEvent(spawnProtectionManager).register(getEntityStoreRegistry());
         new SpawnRegionTitleEvent(spawnProtectionManager, configManager).register(getEntityStoreRegistry());
     }
