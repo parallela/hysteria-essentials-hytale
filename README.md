@@ -11,6 +11,8 @@ Essentials is an all-in-one utility plugin for Hytale server administrators.
 - Kits (with cooldowns and GUI)
 - Chat formatting (per-rank)
 - Build protection (global or spawn-only)
+- Random teleport
+- /back on death
 
 ![Homes](https://raw.githubusercontent.com/nhulston/Essentials/refs/heads/main/images/homes.png) ![TPA](https://raw.githubusercontent.com/nhulston/Essentials/refs/heads/main/images/tpa.png) ![Warps](https://raw.githubusercontent.com/nhulston/Essentials/refs/heads/main/images/warps.png)
 
