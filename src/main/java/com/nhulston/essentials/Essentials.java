@@ -10,6 +10,8 @@ import com.nhulston.essentials.commands.home.HomeCommand;
 import com.nhulston.essentials.commands.home.SetHomeCommand;
 import com.nhulston.essentials.commands.kit.KitCommand;
 import com.nhulston.essentials.commands.list.ListCommand;
+import com.nhulston.essentials.commands.msg.MsgCommand;
+import com.nhulston.essentials.commands.msg.ReplyCommand;
 import com.nhulston.essentials.commands.rtp.RtpCommand;
 import com.nhulston.essentials.commands.spawn.SetSpawnCommand;
 import com.nhulston.essentials.commands.spawn.SpawnCommand;
@@ -150,6 +152,12 @@ public class Essentials extends JavaPlugin {
 
         // Freecam command
         getCommandRegistry().registerCommand(new FreecamCommand());
+
+        // Msg command (with aliases: m, message, whisper, pm)
+        getCommandRegistry().registerCommand(new MsgCommand());
+
+        // Reply command (with alias: reply)
+        getCommandRegistry().registerCommand(new ReplyCommand());
     }
 
     private void registerEvents() {
