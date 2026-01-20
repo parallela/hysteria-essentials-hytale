@@ -14,8 +14,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 public class AlertCommand extends AbstractPlayerCommand {
     public AlertCommand() {
-        super("alert");
+        super("alert", "Broadcast a banner message to all players");
+
+        // Allow extra arguments for the message
         setAllowsExtraArguments(true);
+
+        // Require admin permission
         requirePermission("essentials.alert");
     }
     @Override
