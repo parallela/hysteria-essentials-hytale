@@ -17,9 +17,10 @@ import java.util.Set;
 public class PersonalProtectCommand extends AbstractPlayerCommand {
     private final PersonalBenchManager benchManager;
     public PersonalProtectCommand(@Nonnull PersonalBenchManager benchManager) {
-        super("personal", "pp");
+        super("personal", "Protect your recently placed workbench");
         this.benchManager = benchManager;
         setAllowsExtraArguments(true);
+        addAliases("pp");
     }
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
