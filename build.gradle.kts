@@ -16,6 +16,9 @@ dependencies {
     // Hytale Server API (provided by server at runtime)
     compileOnly(files("libs/HytaleServer.jar"))
 
+    // HysteriaClaims (SimpleClaims) - provided by server at runtime
+    compileOnly(files("libs/HysteriaClaims.jar"))
+
     // Common dependencies (will be bundled in JAR)
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.tomlj:tomlj:1.1.1")

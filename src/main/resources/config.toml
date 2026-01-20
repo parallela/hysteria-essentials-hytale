@@ -18,7 +18,10 @@ admin = 50
 enabled = true
 
 # Fallback format for players without a configured rank
-# Placeholders: %player% = player name, %message% = chat message
+# Placeholders:
+#   %player% = player name
+#   %party% = party name from SimpleClaims (empty if not in a party)
+#   %message% = chat message
 # Color codes: &0-&9, &a-&f (hex colors like &#FF5555 also supported)
 fallback-format = "&0[&fPlayer&0] &f%player%: %message%"
 
@@ -26,6 +29,9 @@ fallback-format = "&0[&fPlayer&0] &f%player%: %message%"
 # The first matching group (in order listed) will be used
 # Group names are defined in your `permissions.json` file
 # Group names should match your permission groups exactly
+#
+# Example with party name: "&0[&6%party%&0] [&cAdmin&0] &c%player%&f: %message%"
+# This will show: [PartyName] [Admin] PlayerName: message
 [chat.formats]
 OP = "&0[&cAdmin&0] &c%player%&f: %message%"
 Adventure = "&0[&fPlayer&0] &f%player%: %message%"

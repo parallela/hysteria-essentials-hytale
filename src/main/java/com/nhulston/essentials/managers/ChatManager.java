@@ -1,4 +1,6 @@
 package com.nhulston.essentials.managers;
+import com.buuz135.simpleclaims.claim.ClaimManager;
+import com.buuz135.simpleclaims.claim.party.PartyInfo;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.event.events.player.PlayerChatEvent;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
@@ -28,10 +30,35 @@ public class ChatManager {
         if (!PermissionsModule.get().hasPermission(sender.getUuid(), COLOR_PERMISSION)) {
             sanitizedContent = stripColorCodes(content);
         }
+
+        // Get party name from SimpleClaims
+        String partyName = getPartyName(sender.getUuid());
+
         String formatted = format
                 .replace("%player%", sender.getUsername())
+                .replace("%party%", partyName)
                 .replace("%message%", sanitizedContent);
         return ColorUtil.colorize(formatted);
+    }
+
+    /**
+     * Gets the party name for a player from HysteriaClaims (SimpleClaims).
+     * Returns empty string if player is not in a party.
+     */
+    @Nonnull
+    private String getPartyName(@Nonnull UUID playerUuid) {
+        try {
+            ClaimManager claimManager = ClaimManager.getInstance();
+            PartyInfo party = claimManager.getPartyFromPlayer(playerUuid);
+
+            if (party != null) {
+                return party.getName();
+            }
+        } catch (Exception e) {
+            // Silently handle any errors (e.g., if HysteriaClaims is not loaded)
+        }
+
+        return "";
     }
     @Nonnull
     private String stripColorCodes(@Nonnull String text) {
