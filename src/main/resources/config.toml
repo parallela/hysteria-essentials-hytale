@@ -156,3 +156,14 @@ enabled = true
 join-message = "&e%player% &ajoined the server"
 leave-message = "&e%player% &cleft the server"
 
+[anti-spam]
+# Anti-spam protection for chat
+# Prevents players from sending messages too quickly and spamming duplicate messages
+enabled = true
+
+# Delay between messages in milliseconds (1000 = 1 second)
+delay = 1000
+
+# Block duplicate messages (same message sent twice in a row)
+block-duplicates = true
+

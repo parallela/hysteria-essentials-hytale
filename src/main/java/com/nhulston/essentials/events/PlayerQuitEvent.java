@@ -3,6 +3,7 @@ import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.nhulston.essentials.commands.freecam.FreecamCommand;
 import com.nhulston.essentials.commands.msg.MsgCommand;
+import com.nhulston.essentials.managers.AntiSpamManager;
 import com.nhulston.essentials.managers.BackManager;
 import com.nhulston.essentials.managers.TeleportManager;
 import com.nhulston.essentials.managers.TpaManager;
@@ -15,14 +16,17 @@ public class PlayerQuitEvent {
     private final TpaManager tpaManager;
     private final TeleportManager teleportManager;
     private final BackManager backManager;
+    private final AntiSpamManager antiSpamManager;
     public PlayerQuitEvent(@Nonnull StorageManager storageManager,
                            @Nonnull TpaManager tpaManager,
                            @Nonnull TeleportManager teleportManager,
-                           @Nonnull BackManager backManager) {
+                           @Nonnull BackManager backManager,
+                           @Nonnull AntiSpamManager antiSpamManager) {
         this.storageManager = storageManager;
         this.tpaManager = tpaManager;
         this.teleportManager = teleportManager;
         this.backManager = backManager;
+        this.antiSpamManager = antiSpamManager;
     }
     public void register(@Nonnull EventRegistry eventRegistry) {
         eventRegistry.registerGlobal(PlayerDisconnectEvent.class, event -> {
@@ -32,6 +36,7 @@ public class PlayerQuitEvent {
             tpaManager.onPlayerQuit(playerUuid);
             teleportManager.onPlayerQuit(playerUuid);
             backManager.onPlayerQuit(playerUuid);
+            antiSpamManager.clearPlayerData(playerUuid);
             MsgCommand.onPlayerQuit(playerUuid);
             FreecamCommand.onPlayerQuit(playerUuid);
             SpawnRegionTitleEvent.onPlayerQuit(playerUuid);

@@ -59,6 +59,12 @@ public class ConfigManager {
     private boolean joinLeaveMessagesEnabled = true;
     private String joinMessage = "&e%player% &ajoined the server";
     private String leaveMessage = "&e%player% &cleft the server";
+
+    // Anti-spam settings
+    private boolean antiSpamEnabled = true;
+    private int antiSpamDelay = 1000; // 1 second in milliseconds
+    private boolean antiSpamBlockDuplicates = true;
+
     public ConfigManager(@Nonnull Path dataFolder) {
         this.configPath = dataFolder.resolve("config.toml");
         load();
@@ -145,6 +151,12 @@ public class ConfigManager {
             joinLeaveMessagesEnabled = config.getBoolean("join-leave-messages.enabled", () -> true);
             joinMessage = config.getString("join-leave-messages.join-message", () -> "&e%player% &ajoined the server");
             leaveMessage = config.getString("join-leave-messages.leave-message", () -> "&e%player% &cleft the server");
+
+            // Anti-spam settings
+            antiSpamEnabled = config.getBoolean("anti-spam.enabled", () -> true);
+            antiSpamDelay = getIntSafe(config, "anti-spam.delay", 1000);
+            antiSpamBlockDuplicates = config.getBoolean("anti-spam.block-duplicates", () -> true);
+
             Log.info("Config loaded!");
         } catch (Exception e) {
             Log.error("Failed to load config: " + e.getClass().getSimpleName() + " - " + e.getMessage());
@@ -396,5 +408,22 @@ public class ConfigManager {
     @Nonnull
     public String getLeaveMessage() {
         return leaveMessage;
+    }
+
+    // Anti-spam getters
+    public boolean isAntiSpamEnabled() {
+        return antiSpamEnabled;
+    }
+
+    public void setAntiSpamEnabled(boolean enabled) {
+        this.antiSpamEnabled = enabled;
+    }
+
+    public int getAntiSpamDelay() {
+        return antiSpamDelay;
+    }
+
+    public boolean isAntiSpamBlockDuplicates() {
+        return antiSpamBlockDuplicates;
     }
 }

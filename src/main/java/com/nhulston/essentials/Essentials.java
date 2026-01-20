@@ -3,6 +3,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.events.AllWorldsLoadedEvent;
 import com.nhulston.essentials.commands.alert.AlertCommand;
+import com.nhulston.essentials.commands.antispam.AntiSpamCommand;
 import com.nhulston.essentials.commands.back.BackCommand;
 import com.nhulston.essentials.commands.essentials.EssentialsCommand;
 import com.nhulston.essentials.commands.freecam.FreecamCommand;
@@ -41,16 +42,7 @@ import com.nhulston.essentials.events.SpawnTeleportEvent;
 import com.nhulston.essentials.events.TeleportMovementEvent;
 import com.nhulston.essentials.events.SleepPercentageEvent;
 import com.nhulston.essentials.events.UpdateNotifyEvent;
-import com.nhulston.essentials.managers.BackManager;
-import com.nhulston.essentials.managers.ChatManager;
-import com.nhulston.essentials.managers.HomeManager;
-import com.nhulston.essentials.managers.KitManager;
-import com.nhulston.essentials.managers.PersonalBenchManager;
-import com.nhulston.essentials.managers.SpawnManager;
-import com.nhulston.essentials.managers.SpawnProtectionManager;
-import com.nhulston.essentials.managers.TeleportManager;
-import com.nhulston.essentials.managers.TpaManager;
-import com.nhulston.essentials.managers.WarpManager;
+import com.nhulston.essentials.managers.*;
 import com.nhulston.essentials.util.ConfigManager;
 import com.nhulston.essentials.util.StorageManager;
 import com.nhulston.essentials.util.Log;
@@ -71,7 +63,9 @@ public class Essentials extends JavaPlugin {
     private KitManager kitManager;
     private BackManager backManager;
     private PersonalBenchManager personalBenchManager;
+    private AntiSpamManager antiSpamManager;
     private VersionChecker versionChecker;
+
     public Essentials(@Nonnull JavaPluginInit init) {
         super(init);
     }
@@ -92,6 +86,7 @@ public class Essentials extends JavaPlugin {
         kitManager = new KitManager(getDataDirectory(), storageManager);
         backManager = new BackManager();
         personalBenchManager = new PersonalBenchManager(getDataDirectory());
+        antiSpamManager = new AntiSpamManager(configManager);
         versionChecker = new VersionChecker(VERSION);
     }
     @Override
@@ -142,10 +137,12 @@ public class Essentials extends JavaPlugin {
         getCommandRegistry().registerCommand(new RepairCommand(configManager, storageManager));
         getCommandRegistry().registerCommand(new PersonalProtectCommand(personalBenchManager));
         getCommandRegistry().registerCommand(new AlertCommand());
+        getCommandRegistry().registerCommand(new AntiSpamCommand(configManager));
     }
+
     private void registerEvents() {
         new JoinLeaveMessageEvent(configManager).register(getEventRegistry());
-        new ChatEvent(chatManager).register(getEventRegistry());
+        new ChatEvent(chatManager, antiSpamManager).register(getEventRegistry());
         new BuildProtectionEvent(configManager).register(getEntityStoreRegistry());
         new SpawnProtectionEvent(spawnProtectionManager).register(getEntityStoreRegistry());
         new SpawnRegionTitleEvent(spawnProtectionManager, configManager).register(getEntityStoreRegistry());
@@ -158,7 +155,8 @@ public class Essentials extends JavaPlugin {
         new UpdateNotifyEvent(versionChecker).register(getEventRegistry());
         new SleepPercentageEvent(configManager).register(getEntityStoreRegistry());
         new PersonalBenchProtectionEvent(personalBenchManager).register(getEntityStoreRegistry());
-        new PlayerQuitEvent(storageManager, tpaManager, teleportManager, backManager).register(getEventRegistry());
+        new PlayerQuitEvent(storageManager, tpaManager, teleportManager, backManager, antiSpamManager).register(getEventRegistry());
+
         getEventRegistry().registerGlobal(AllWorldsLoadedEvent.class, event -> {
             spawnManager.syncWorldSpawnProvider();
         });
