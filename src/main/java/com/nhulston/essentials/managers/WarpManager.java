@@ -1,23 +1,17 @@
 package com.nhulston.essentials.managers;
-
 import com.nhulston.essentials.models.Warp;
 import com.nhulston.essentials.util.StorageManager;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 public class WarpManager {
     private static final Pattern VALID_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9]+$");
     private static final int MAX_NAME_LENGTH = 16;
-
     private final StorageManager storageManager;
-
     public WarpManager(@Nonnull StorageManager storageManager) {
         this.storageManager = storageManager;
     }
-
     @Nullable
     public String validateWarpName(@Nonnull String name) {
         if (name.isEmpty()) {
@@ -31,7 +25,6 @@ public class WarpManager {
         }
         return null;
     }
-
     @Nullable
     public String setWarp(@Nonnull String name, @Nonnull String world,
                           double x, double y, double z, float yaw, float pitch) {
@@ -39,22 +32,18 @@ public class WarpManager {
         if (validationError != null) {
             return validationError;
         }
-
         Warp warp = new Warp(world, x, y, z, yaw, pitch);
         storageManager.setWarp(name, warp);
         return null;
     }
-
     @Nullable
     public Warp getWarp(@Nonnull String name) {
         return storageManager.getWarp(name);
     }
-
     @Nonnull
     public Map<String, Warp> getWarps() {
         return storageManager.getWarps();
     }
-
     public boolean deleteWarp(@Nonnull String name) {
         return storageManager.deleteWarp(name);
     }

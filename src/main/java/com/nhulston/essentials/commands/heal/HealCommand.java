@@ -1,5 +1,4 @@
 package com.nhulston.essentials.commands.heal;
-
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -10,20 +9,12 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.nhulston.essentials.util.Msg;
-
 import javax.annotation.Nonnull;
-
-/**
- * Command to heal the player to full health.
- * Usage: /heal
- */
 public class HealCommand extends AbstractPlayerCommand {
-
     public HealCommand() {
         super("heal", "Restore your health to full");
         requirePermission("essentials.heal");
     }
-
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
                            @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
@@ -32,10 +23,8 @@ public class HealCommand extends AbstractPlayerCommand {
             Msg.fail(context, "Could not access your stats.");
             return;
         }
-
         int healthStatIndex = DefaultEntityStatTypes.getHealth();
         statMap.maximizeStatValue(healthStatIndex);
-        
         Msg.success(context, "You have been healed.");
     }
 }

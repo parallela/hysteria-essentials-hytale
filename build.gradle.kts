@@ -54,7 +54,8 @@ tasks {
     shadowJar {
         archiveBaseName.set(rootProject.name)
         archiveClassifier.set("")
-        destinationDirectory.set(file("/mnt/c/Users/Nicholas/Development/hytale-server/mods"))
+        // Output to build/libs directory (default location)
+        // You can copy the JAR manually to your server's mods folder
 
         // Relocate dependencies to avoid conflicts
         relocate("com.google.gson", "com.nhulston.libs.gson")
