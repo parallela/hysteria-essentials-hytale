@@ -167,3 +167,29 @@ delay = 1000
 # Block duplicate messages (same message sent twice in a row)
 block-duplicates = true
 
+[item-clear]
+# Automatically clear dropped items from all worlds at a specified interval
+# This helps reduce lag from excessive item entities
+enabled = true
+
+# Interval between clearing items in seconds
+# Default: 300 (5 minutes)
+interval = 300
+
+# Warning times before clearing (e.g., "5min", "1min", "30sec", "10sec")
+# Players will see a warning message at these times before items are cleared
+# Times should be in descending order and less than the interval
+# Supported units: d (days), h (hours), min (minutes), sec (seconds), or just s/m
+warnings = ["5min", "3min", "1min", "30sec", "10sec"]
+
+# Warning message shown at the times specified above
+# Placeholder: {time} = time remaining (e.g., "5min")
+# Color codes: &0-&9, &a-&f (hex colors like &#FF5555 also supported)
+warning-message = "&7[&6ItemClear&7] &eItems will be cleared in &a{time}&e..."
+
+# Message shown when clearing starts
+clearing-message = "&7[&6ItemClear&7] &eClearing dropped items..."
+
+# Message shown after items are cleared
+# Placeholder: {count} = number of items cleared
+cleared-message = "&7[&6ItemClear&7] &aCleared &e{count} &adropped items."

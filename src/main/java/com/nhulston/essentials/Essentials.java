@@ -32,6 +32,7 @@ import com.nhulston.essentials.commands.warp.WarpCommand;
 import com.nhulston.essentials.events.BuildProtectionEvent;
 import com.nhulston.essentials.events.ChatEvent;
 import com.nhulston.essentials.events.DeathLocationEvent;
+import com.nhulston.essentials.events.ItemClearEvent;
 import com.nhulston.essentials.events.JoinLeaveMessageEvent;
 import com.nhulston.essentials.events.MotdEvent;
 import com.nhulston.essentials.events.PersonalBenchProtectionEvent;
@@ -64,6 +65,7 @@ public class Essentials extends JavaPlugin {
     private BackManager backManager;
     private PersonalBenchManager personalBenchManager;
     private AntiSpamManager antiSpamManager;
+    private ItemClearManager itemClearManager;
     private VersionChecker versionChecker;
 
     public Essentials(@Nonnull JavaPluginInit init) {
@@ -87,18 +89,23 @@ public class Essentials extends JavaPlugin {
         backManager = new BackManager();
         personalBenchManager = new PersonalBenchManager(getDataDirectory());
         antiSpamManager = new AntiSpamManager(configManager);
+        itemClearManager = new ItemClearManager(configManager);
         versionChecker = new VersionChecker(VERSION);
     }
     @Override
     protected void start() {
         registerCommands();
         registerEvents();
+        itemClearManager.start();
         versionChecker.checkForUpdatesAsync();
         Log.info("Essentials v" + VERSION + " started successfully!");
     }
     @Override
     protected void shutdown() {
         Log.info("Essentials is shutting down...");
+        if (itemClearManager != null) {
+            itemClearManager.shutdown();
+        }
         if (storageManager != null) {
             storageManager.shutdown();
         }
@@ -155,6 +162,7 @@ public class Essentials extends JavaPlugin {
         new UpdateNotifyEvent(versionChecker).register(getEventRegistry());
         new SleepPercentageEvent(configManager).register(getEntityStoreRegistry());
         new PersonalBenchProtectionEvent(personalBenchManager).register(getEntityStoreRegistry());
+        new ItemClearEvent(itemClearManager).register(getEventRegistry());
         new PlayerQuitEvent(storageManager, tpaManager, teleportManager, backManager, antiSpamManager).register(getEventRegistry());
 
         getEventRegistry().registerGlobal(AllWorldsLoadedEvent.class, event -> {

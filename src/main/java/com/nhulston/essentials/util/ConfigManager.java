@@ -1,5 +1,6 @@
 package com.nhulston.essentials.util;
 import org.tomlj.Toml;
+import org.tomlj.TomlArray;
 import org.tomlj.TomlParseResult;
 import org.tomlj.TomlTable;
 import javax.annotation.Nonnull;
@@ -64,6 +65,14 @@ public class ConfigManager {
     private boolean antiSpamEnabled = true;
     private int antiSpamDelay = 1000; // 1 second in milliseconds
     private boolean antiSpamBlockDuplicates = true;
+
+    // Item clear settings
+    private boolean itemClearEnabled = true;
+    private long itemClearInterval = 300L; // 5 minutes in seconds
+    private final List<String> itemClearWarnings = new ArrayList<>();
+    private String itemClearWarningMessage = "&7[&6ItemClear&7] &eItems will be cleared in &a{time}&e...";
+    private String itemClearClearingMessage = "&7[&6ItemClear&7] &eClearing dropped items...";
+    private String itemClearClearedMessage = "&7[&6ItemClear&7] &aCleared &e{count} &adropped items.";
 
     public ConfigManager(@Nonnull Path dataFolder) {
         this.configPath = dataFolder.resolve("config.toml");
@@ -156,6 +165,37 @@ public class ConfigManager {
             antiSpamEnabled = config.getBoolean("anti-spam.enabled", () -> true);
             antiSpamDelay = getIntSafe(config, "anti-spam.delay", 1000);
             antiSpamBlockDuplicates = config.getBoolean("anti-spam.block-duplicates", () -> true);
+
+            // Item clear settings
+            itemClearEnabled = config.getBoolean("item-clear.enabled", () -> true);
+            Long intervalLong = config.getLong("item-clear.interval");
+            itemClearInterval = intervalLong != null ? intervalLong : 300L;
+
+            itemClearWarnings.clear();
+            TomlArray warningsArray = config.getArray("item-clear.warnings");
+            if (warningsArray != null) {
+                for (int i = 0; i < warningsArray.size(); i++) {
+                    String warning = warningsArray.getString(i);
+                    if (warning != null) {
+                        itemClearWarnings.add(warning);
+                    }
+                }
+            }
+            // Set default warnings if none configured
+            if (itemClearWarnings.isEmpty()) {
+                itemClearWarnings.add("5min");
+                itemClearWarnings.add("3min");
+                itemClearWarnings.add("1min");
+                itemClearWarnings.add("30sec");
+                itemClearWarnings.add("10sec");
+            }
+
+            itemClearWarningMessage = config.getString("item-clear.warning-message",
+                () -> "&7[&6ItemClear&7] &eItems will be cleared in &a{time}&e...");
+            itemClearClearingMessage = config.getString("item-clear.clearing-message",
+                () -> "&7[&6ItemClear&7] &eClearing dropped items...");
+            itemClearClearedMessage = config.getString("item-clear.cleared-message",
+                () -> "&7[&6ItemClear&7] &aCleared &e{count} &adropped items.");
 
             Log.info("Config loaded!");
         } catch (Exception e) {
@@ -425,5 +465,34 @@ public class ConfigManager {
 
     public boolean isAntiSpamBlockDuplicates() {
         return antiSpamBlockDuplicates;
+    }
+
+    // Item clear getters
+    public boolean isItemClearEnabled() {
+        return itemClearEnabled;
+    }
+
+    public long getItemClearInterval() {
+        return itemClearInterval;
+    }
+
+    @Nonnull
+    public List<String> getItemClearWarnings() {
+        return itemClearWarnings;
+    }
+
+    @Nonnull
+    public String getItemClearWarningMessage() {
+        return itemClearWarningMessage;
+    }
+
+    @Nonnull
+    public String getItemClearClearingMessage() {
+        return itemClearClearingMessage;
+    }
+
+    @Nonnull
+    public String getItemClearClearedMessage() {
+        return itemClearClearedMessage;
     }
 }
