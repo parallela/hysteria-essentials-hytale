@@ -1,0 +1,107 @@
+[tiers]
+# Percentage chances for each tier (legendary is checked first, then rare, then common)
+legendary-chance = 1.0    # 1% chance for legendary rewards
+rare-chance = 10.0        # 10% chance for rare rewards
+# Remaining chance (89%) goes to common rewards
+
+[ui]
+# UI settings for reward selection
+enabled = true  # true = show UI to select reward, false = auto-give random reward
+
+[item]
+# Vote chest item configuration
+id = "VoteRewardItem"  # Item ID that will open the vote chest UI
+# Examples: "Furniture_Goblin_Chest_Small", "Item_Paper", "Weapon_Handgun", etc.
+
+[messages]
+# Customizable messages (use & for color codes)
+common-roll = "&4Hysteria &7> &7You rolled a Common reward!"
+rare-roll = "&4Hysteria &7> &9You rolled a Rare reward!"
+legendary-roll = "&4Hysteria &7> &6You rolled a LEGENDARY reward!"
+reward-received = "&4Hysteria &7> &aYou received %quantity%x %item%!"
+no-rewards = "&4Hysteria &7> &cNo rewards available for this tier!"
+ui-hint = "&4Hysteria &7> &7Sneak + right-click to see reward options!"
+give-usage = "&4Hysteria &7> &7Usage: /votechest give <player> [amount]"
+give-success = "&4Hysteria &7> &aYou received %amount% vote chest(s)!"
+give-success-admin = "&4Hysteria &7> &aGave %amount% vote chest(s) to %player%"
+
+[rewards.common]
+# Common tier rewards - Basic ores and materials
+
+[rewards.common.iron_ore]
+item = "Ore_Iron"
+min-quantity = 3
+max-quantity = 8
+percentage = 30.0
+
+[rewards.common.gold_ore]
+item = "Ore_Gold"
+min-quantity = 2
+max-quantity = 5
+percentage = 25.0
+
+[rewards.common.cobalt_ore]
+item = "Ore_Cobalt"
+min-quantity = 2
+max-quantity = 4
+percentage = 20.0
+
+[rewards.common.charcoal]
+item = "Ingredient_Charcoal"
+min-quantity = 5
+max-quantity = 15
+percentage = 15.0
+
+[rewards.common.torch]
+item = "Furniture_Crude_Torch"
+min-quantity = 8
+max-quantity = 16
+percentage = 10.0
+
+[rewards.rare]
+# Rare tier rewards - Gems and prisma
+
+[rewards.rare.ruby]
+item = "Rock_Gem_Rudy"
+min-quantity = 1
+max-quantity = 3
+percentage = 40.0
+
+[rewards.rare.diamond]
+item = "Rock_Gem_Diamond"
+min-quantity = 1
+max-quantity = 2
+percentage = 30.0
+
+[rewards.rare.prisma]
+item = "Ore_Prisma"
+min-quantity = 2
+max-quantity = 5
+percentage = 30.0
+
+[rewards.legendary]
+# Legendary tier rewards - Weapons and tools (very rare!)
+
+[rewards.legendary.handgun]
+item = "Weapon_Handgun"
+min-quantity = 1
+max-quantity = 1
+percentage = 40.0
+
+[rewards.legendary.katana]
+item = "Weapon_Longsword_Katana"
+min-quantity = 1
+max-quantity = 1
+percentage = 40.0
+
+[rewards.legendary.iron_pickaxe]
+item = "Tool_Pickaxe_Iron"
+min-quantity = 0
+max-quantity = 1
+percentage = 10.0
+
+[rewards.legendary.iron_shovel]
+item = "Tool_Shovel_Iron"
+min-quantity = 0
+max-quantity = 1
+percentage = 10.0

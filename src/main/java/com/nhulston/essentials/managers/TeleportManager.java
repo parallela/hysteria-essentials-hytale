@@ -33,8 +33,21 @@ public class TeleportManager {
                               @Nonnull String worldName, double x, double y, double z,
                               float yaw, float pitch, @Nullable String successMessage,
                               @Nullable Runnable onSuccess) {
+        queueTeleport(playerRef, entityRef, store, startPosition, worldName, x, y, z, yaw, pitch,
+                     configManager.getTeleportDelay(), successMessage, onSuccess);
+    }
+
+    /**
+     * Queue a teleport with a custom delay
+     */
+    public void queueTeleport(@Nonnull PlayerRef playerRef, @Nonnull Ref<EntityStore> entityRef,
+                              @Nonnull Store<EntityStore> store, @Nonnull Vector3d startPosition,
+                              @Nonnull String worldName, double x, double y, double z,
+                              float yaw, float pitch, int customDelay,
+                              @Nullable String successMessage, @Nullable Runnable onSuccess) {
         UUID playerUuid = playerRef.getUuid();
-        int delay = configManager.getTeleportDelay();
+        int delay = customDelay;
+
         if (delay <= 0 || PermissionsModule.get().hasPermission(playerUuid, BYPASS_PERMISSION)) {
             String error = TeleportUtil.teleportSafe(store, entityRef, worldName, x, y, z, yaw, pitch);
             if (error != null) {
@@ -49,10 +62,12 @@ public class TeleportManager {
             }
             return;
         }
+
         if (pendingTeleports.containsKey(playerUuid)) {
             Msg.fail(playerRef, "You already have a pending teleport. Please wait.");
             return;
         }
+
         TeleportDestination destination = new TeleportDestination(worldName, x, y, z, yaw, pitch);
         PendingTeleport pending = new PendingTeleport(playerRef, startPosition, destination, successMessage, delay, onSuccess);
         pendingTeleports.put(playerUuid, pending);

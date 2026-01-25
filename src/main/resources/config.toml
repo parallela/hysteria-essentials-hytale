@@ -121,7 +121,14 @@ percentage = 20
 # Random teleport settings
 
 # Cooldown in seconds between RTP uses (global)
-cooldown = 300
+# 21600 seconds = 6 hours
+cooldown = 21600
+
+# Teleport delay in seconds before RTP teleport happens
+# Players will see a countdown message during this delay
+# Set to 0 to teleport instantly
+# Default: 3 seconds
+teleport-delay = 3
 
 # Default world to teleport to if the player's current world is not in the worlds list
 # If this world is also not in the list, RTP will be disabled for that player
@@ -193,3 +200,35 @@ clearing-message = "&7[&6ItemClear&7] &eClearing dropped items..."
 # Message shown after items are cleared
 # Placeholder: {count} = number of items cleared
 cleared-message = "&7[&6ItemClear&7] &aCleared &e{count} &adropped items."
+
+[join-leave-messages]
+# Broadcast messages when players join or leave the server
+
+# Join messages
+join-enabled = true
+join-message = "&8[&a+&8] &7%player%"
+first-join-message = "&e%player% &6joined the game for the first time!"
+
+# Leave messages
+leave-enabled = true
+leave-message = "&8[&c-&8] &7%player%"
+
+[discord]
+# Discord server invite command
+# Players can use /discord to get the invite link
+enabled = true
+
+# Discord server invite URL
+url = "https://discord.gg/yourserver"
+
+# Title message shown when using /discord
+# Leave empty to disable title
+# Color codes: &0-&9, &a-&f (hex colors like &#FF5555 also supported)
+title = "&8[&5Discord&8] &7Join our Discord server!"
+
+# Message shown with the Discord link
+# Placeholder: %url% = Discord URL
+# Color codes: &0-&9, &a-&f (hex colors like &#FF5555 also supported)
+message = "&7Link: &b%url%"
+
+

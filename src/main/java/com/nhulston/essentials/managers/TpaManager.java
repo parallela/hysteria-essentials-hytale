@@ -57,6 +57,37 @@ public class TpaManager {
         Log.info("TPA request accepted: " + foundRequest.getRequesterName() + " -> " + target.getUsername());
         return foundRequest;
     }
+
+    /**
+     * Accepts the most recent teleport request sent to the target player.
+     * @param target The player accepting the request
+     * @return The accepted TpaRequest, or null if no requests exist
+     */
+    @Nullable
+    public TpaRequest acceptMostRecentRequest(@Nonnull PlayerRef target) {
+        UUID targetUuid = target.getUuid();
+        ConcurrentHashMap<UUID, TpaRequest> targetRequests = pendingRequests.get(targetUuid);
+
+        if (targetRequests == null || targetRequests.isEmpty()) {
+            return null;
+        }
+
+        // Get the first (most recent) request
+        Map.Entry<UUID, TpaRequest> entry = targetRequests.entrySet().iterator().next();
+        UUID requesterUuid = entry.getKey();
+        TpaRequest request = entry.getValue();
+
+        targetRequests.remove(requesterUuid);
+        request.cancel();
+
+        if (targetRequests.isEmpty()) {
+            pendingRequests.remove(targetUuid);
+        }
+
+        Log.info("TPA request accepted (most recent): " + request.getRequesterName() + " -> " + target.getUsername());
+        return request;
+    }
+
     private void expireRequest(UUID targetUuid, UUID requesterUuid) {
         ConcurrentHashMap<UUID, TpaRequest> targetRequests = pendingRequests.get(targetUuid);
         if (targetRequests == null) {

@@ -24,7 +24,7 @@ public class ConfigManager {
     private static final String DEFAULT_CHAT_FORMAT = "&7%player%&f: %message%";
     private static final int DEFAULT_SPAWN_PROTECTION_RADIUS = 16;
     private static final int DEFAULT_TELEPORT_DELAY = 3;
-    private static final int DEFAULT_RTP_COOLDOWN = 300;
+    private static final int DEFAULT_RTP_COOLDOWN = 21600; // 6 hours in seconds
     private static final Pattern SECTION_PATTERN = Pattern.compile("^\\[([a-zA-Z0-9_.-]+)]\\s*$");
     private final Path configPath;
     private final HashMap<String, Integer> homeLimits = new HashMap<>();
@@ -49,6 +49,7 @@ public class ConfigManager {
     private String spawnProtectionExitTitle = "Leaving Spawn";
     private String spawnProtectionExitSubtitle = "You can now build";
     private int rtpCooldown = DEFAULT_RTP_COOLDOWN;
+    private int rtpTeleportDelay = DEFAULT_TELEPORT_DELAY; // Separate delay for RTP teleports
     private String rtpDefaultWorld = "default";
     private final HashMap<String, Integer> rtpWorlds = new HashMap<>();
     private boolean motdEnabled = true;
@@ -57,9 +58,16 @@ public class ConfigManager {
     private int sleepPercentage = 20;
     private String shoutPrefix = "&0[&7Broadcast&0] &f";
     private int repairCooldown = 43200;
+
+    // Join/Leave message settings
+    private boolean joinMessageEnabled = true;
+    private String joinMessage = "&8[&a+&8] &7%player%";
+    private String firstJoinMessage = "&e%player% &6joined the game for the first time!";
+    private boolean leaveMessageEnabled = true;
+    private String leaveMessage = "&8[&c-&8] &7%player%";
+
+    // Legacy fields (deprecated, kept for backward compatibility)
     private boolean joinLeaveMessagesEnabled = true;
-    private String joinMessage = "&e%player% &ajoined the server";
-    private String leaveMessage = "&e%player% &cleft the server";
 
     // Anti-spam settings
     private boolean antiSpamEnabled = true;
@@ -73,6 +81,12 @@ public class ConfigManager {
     private String itemClearWarningMessage = "&7[&6ItemClear&7] &eItems will be cleared in &a{time}&e...";
     private String itemClearClearingMessage = "&7[&6ItemClear&7] &eClearing dropped items...";
     private String itemClearClearedMessage = "&7[&6ItemClear&7] &aCleared &e{count} &adropped items.";
+
+    // Discord settings
+    private boolean discordEnabled = true;
+    private String discordUrl = "https://discord.gg/yourserver";
+    private String discordTitle = "&8[&5Discord&8] &7Join our Discord server!";
+    private String discordMessage = "&7Link: &b%url%";
 
     public ConfigManager(@Nonnull Path dataFolder) {
         this.configPath = dataFolder.resolve("config.toml");
@@ -139,6 +153,7 @@ public class ConfigManager {
             spawnProtectionExitTitle = config.getString("spawn-protection.exit-title", () -> "Leaving Spawn");
             spawnProtectionExitSubtitle = config.getString("spawn-protection.exit-subtitle", () -> "You can now build");
             rtpCooldown = getIntSafe(config, "rtp.cooldown", DEFAULT_RTP_COOLDOWN);
+            rtpTeleportDelay = getIntSafe(config, "rtp.teleport-delay", DEFAULT_TELEPORT_DELAY);
             rtpWorlds.clear();
             TomlTable rtpWorldsTable = config.getTable("rtp.worlds");
             if (rtpWorldsTable != null) {
@@ -157,9 +172,13 @@ public class ConfigManager {
             sleepPercentage = getIntSafe(config, "sleep.percentage", 20);
             shoutPrefix = config.getString("shout.prefix", () -> "&0[&7Broadcast&0] &f");
             repairCooldown = getIntSafe(config, "repair.cooldown", 43200);
-            joinLeaveMessagesEnabled = config.getBoolean("join-leave-messages.enabled", () -> true);
-            joinMessage = config.getString("join-leave-messages.join-message", () -> "&e%player% &ajoined the server");
-            leaveMessage = config.getString("join-leave-messages.leave-message", () -> "&e%player% &cleft the server");
+
+            // Join/Leave messages config
+            joinMessageEnabled = config.getBoolean("join-leave-messages.join-enabled", () -> true);
+            joinMessage = config.getString("join-leave-messages.join-message", () -> "&8[&a+&8] &7%player%");
+            firstJoinMessage = config.getString("join-leave-messages.first-join-message", () -> "&e%player% &6joined the game for the first time!");
+            leaveMessageEnabled = config.getBoolean("join-leave-messages.leave-enabled", () -> true);
+            leaveMessage = config.getString("join-leave-messages.leave-message", () -> "&8[&c-&8] &7%player%");
 
             // Anti-spam settings
             antiSpamEnabled = config.getBoolean("anti-spam.enabled", () -> true);
@@ -196,6 +215,12 @@ public class ConfigManager {
                 () -> "&7[&6ItemClear&7] &eClearing dropped items...");
             itemClearClearedMessage = config.getString("item-clear.cleared-message",
                 () -> "&7[&6ItemClear&7] &aCleared &e{count} &adropped items.");
+
+            // Discord settings
+            discordEnabled = config.getBoolean("discord.enabled", () -> true);
+            discordUrl = config.getString("discord.url", () -> "https://discord.gg/yourserver");
+            discordTitle = config.getString("discord.title", () -> "&8[&5Discord&8] &7Join our Discord server!");
+            discordMessage = config.getString("discord.message", () -> "&7Link: &b%url%");
 
             Log.info("Config loaded!");
         } catch (Exception e) {
@@ -410,6 +435,9 @@ public class ConfigManager {
     public int getRtpCooldown() {
         return rtpCooldown;
     }
+    public int getRtpTeleportDelay() {
+        return rtpTeleportDelay;
+    }
     @Nonnull
     public String getRtpDefaultWorld() {
         return rtpDefaultWorld;
@@ -438,13 +466,25 @@ public class ConfigManager {
     public int getRepairCooldown() {
         return repairCooldown;
     }
-    public boolean isJoinLeaveMessagesEnabled() {
-        return joinLeaveMessagesEnabled;
+
+    public boolean isJoinMessageEnabled() {
+        return joinMessageEnabled;
     }
+
     @Nonnull
     public String getJoinMessage() {
         return joinMessage;
     }
+
+    @Nonnull
+    public String getFirstJoinMessage() {
+        return firstJoinMessage;
+    }
+
+    public boolean isLeaveMessageEnabled() {
+        return leaveMessageEnabled;
+    }
+
     @Nonnull
     public String getLeaveMessage() {
         return leaveMessage;
@@ -494,5 +534,24 @@ public class ConfigManager {
     @Nonnull
     public String getItemClearClearedMessage() {
         return itemClearClearedMessage;
+    }
+
+    public boolean isDiscordEnabled() {
+        return discordEnabled;
+    }
+
+    @Nonnull
+    public String getDiscordUrl() {
+        return discordUrl;
+    }
+
+    @Nonnull
+    public String getDiscordTitle() {
+        return discordTitle;
+    }
+
+    @Nonnull
+    public String getDiscordMessage() {
+        return discordMessage;
     }
 }

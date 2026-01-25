@@ -5,6 +5,7 @@ import com.hypixel.hytale.server.core.universe.world.events.AllWorldsLoadedEvent
 import com.nhulston.essentials.commands.alert.AlertCommand;
 import com.nhulston.essentials.commands.antispam.AntiSpamCommand;
 import com.nhulston.essentials.commands.back.BackCommand;
+import com.nhulston.essentials.commands.discord.DiscordCommand;
 import com.nhulston.essentials.commands.essentials.EssentialsCommand;
 import com.nhulston.essentials.commands.freecam.FreecamCommand;
 import com.nhulston.essentials.commands.god.GodCommand;
@@ -29,6 +30,7 @@ import com.nhulston.essentials.commands.tpa.TpacceptCommand;
 import com.nhulston.essentials.commands.warp.DelWarpCommand;
 import com.nhulston.essentials.commands.warp.SetWarpCommand;
 import com.nhulston.essentials.commands.warp.WarpCommand;
+import com.nhulston.essentials.commands.votechest.VoteChestCommand;
 import com.nhulston.essentials.events.BuildProtectionEvent;
 import com.nhulston.essentials.events.ChatEvent;
 import com.nhulston.essentials.events.DeathLocationEvent;
@@ -43,6 +45,7 @@ import com.nhulston.essentials.events.SpawnTeleportEvent;
 import com.nhulston.essentials.events.TeleportMovementEvent;
 import com.nhulston.essentials.events.SleepPercentageEvent;
 import com.nhulston.essentials.events.UpdateNotifyEvent;
+import com.nhulston.essentials.systems.VoteChestPlaceSystem;
 import com.nhulston.essentials.managers.*;
 import com.nhulston.essentials.util.ConfigManager;
 import com.nhulston.essentials.util.StorageManager;
@@ -50,7 +53,7 @@ import com.nhulston.essentials.util.Log;
 import com.nhulston.essentials.util.VersionChecker;
 import javax.annotation.Nonnull;
 public class Essentials extends JavaPlugin {
-    public static final String VERSION = "1.5.1";
+    public static final String VERSION = "1.5.5";
     private static Essentials instance;
     private ConfigManager configManager;
     private StorageManager storageManager;
@@ -66,6 +69,7 @@ public class Essentials extends JavaPlugin {
     private PersonalBenchManager personalBenchManager;
     private AntiSpamManager antiSpamManager;
     private ItemClearManager itemClearManager;
+    private VoteChestManager voteChestManager;
     private VersionChecker versionChecker;
 
     public Essentials(@Nonnull JavaPluginInit init) {
@@ -90,6 +94,7 @@ public class Essentials extends JavaPlugin {
         personalBenchManager = new PersonalBenchManager(getDataDirectory());
         antiSpamManager = new AntiSpamManager(configManager);
         itemClearManager = new ItemClearManager(configManager);
+        voteChestManager = new VoteChestManager(getDataDirectory());
         versionChecker = new VersionChecker(VERSION);
     }
     @Override
@@ -119,18 +124,23 @@ public class Essentials extends JavaPlugin {
     }
     private void registerCommands() {
         getCommandRegistry().registerCommand(new SetHomeCommand(homeManager));
-        getCommandRegistry().registerCommand(new HomeCommand(homeManager, teleportManager));
+        getCommandRegistry().registerCommand(new HomeCommand(homeManager, teleportManager, backManager));
         getCommandRegistry().registerCommand(new DelHomeCommand(homeManager));
+
         getCommandRegistry().registerCommand(new SetWarpCommand(warpManager));
-        getCommandRegistry().registerCommand(new WarpCommand(warpManager, teleportManager));
+        getCommandRegistry().registerCommand(new WarpCommand(warpManager, teleportManager, backManager));
         getCommandRegistry().registerCommand(new DelWarpCommand(warpManager));
+
         getCommandRegistry().registerCommand(new SetSpawnCommand(spawnManager));
-        getCommandRegistry().registerCommand(new SpawnCommand(spawnManager, teleportManager));
+        getCommandRegistry().registerCommand(new SpawnCommand(spawnManager, teleportManager, backManager));
+
         getCommandRegistry().registerCommand(new TpaCommand(tpaManager));
-        getCommandRegistry().registerCommand(new TpacceptCommand(tpaManager, teleportManager));
+        getCommandRegistry().registerCommand(new TpacceptCommand(tpaManager, teleportManager, backManager));
+
         getCommandRegistry().registerCommand(new KitCommand(kitManager));
         getCommandRegistry().registerCommand(new BackCommand(backManager, teleportManager));
-        getCommandRegistry().registerCommand(new RtpCommand(configManager, storageManager, teleportManager));
+        getCommandRegistry().registerCommand(new RtpCommand(configManager, storageManager, teleportManager, backManager));
+
         getCommandRegistry().registerCommand(new ListCommand());
         getCommandRegistry().registerCommand(new HealCommand());
         getCommandRegistry().registerCommand(new FreecamCommand());
@@ -145,10 +155,12 @@ public class Essentials extends JavaPlugin {
         getCommandRegistry().registerCommand(new PersonalProtectCommand(personalBenchManager));
         getCommandRegistry().registerCommand(new AlertCommand());
         getCommandRegistry().registerCommand(new AntiSpamCommand(configManager));
+        getCommandRegistry().registerCommand(new DiscordCommand(configManager));
+        getCommandRegistry().registerCommand(new VoteChestCommand(voteChestManager));
     }
 
     private void registerEvents() {
-        new JoinLeaveMessageEvent(configManager).register(getEventRegistry());
+        new JoinLeaveMessageEvent(configManager, storageManager).register(getEventRegistry());
         new ChatEvent(chatManager, antiSpamManager).register(getEventRegistry());
         new BuildProtectionEvent(configManager).register(getEntityStoreRegistry());
         new SpawnProtectionEvent(spawnProtectionManager).register(getEntityStoreRegistry());
@@ -163,6 +175,7 @@ public class Essentials extends JavaPlugin {
         new SleepPercentageEvent(configManager).register(getEntityStoreRegistry());
         new PersonalBenchProtectionEvent(personalBenchManager).register(getEntityStoreRegistry());
         new ItemClearEvent(itemClearManager).register(getEventRegistry());
+        getEntityStoreRegistry().registerSystem(new VoteChestPlaceSystem(voteChestManager));
         new PlayerQuitEvent(storageManager, tpaManager, teleportManager, backManager, antiSpamManager).register(getEventRegistry());
 
         getEventRegistry().registerGlobal(AllWorldsLoadedEvent.class, event -> {
@@ -176,6 +189,7 @@ public class Essentials extends JavaPlugin {
     public void reloadConfigs() {
         configManager.reload();
         kitManager.reload();
+        voteChestManager.reload();
         Log.info("All configurations reloaded.");
     }
 }

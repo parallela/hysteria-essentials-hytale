@@ -6,8 +6,8 @@ import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.modules.entity.DespawnComponent;
 import com.hypixel.hytale.server.core.modules.entity.item.ItemComponent;
-import com.hypixel.hytale.server.core.modules.entity.item.ItemPhysicsComponent;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Manages automatic clearing of dropped items from worlds at configurable intervals.
+ * Uses DespawnComponent to identify dropped items that should be cleared.
+ * Items without DespawnComponent (admin-spawned via entity tool) are preserved.
  */
 public class ItemClearManager {
     private final ConfigManager configManager;
@@ -149,14 +151,18 @@ public class ItemClearManager {
 
     /**
      * Clears dropped items in a specific world.
+     * Only clears items that have DespawnComponent (naturally dropped/timed items).
+     * Items without DespawnComponent (admin-spawned via entity tool) are preserved.
      * @return Number of items cleared
      */
     private int clearItemsInWorld(@Nonnull World world) {
         Store<EntityStore> store = world.getEntityStore().getStore();
         ComponentType<EntityStore, ItemComponent> itemType = ItemComponent.getComponentType();
-        ComponentType<EntityStore, ItemPhysicsComponent> physicsType = ItemPhysicsComponent.getComponentType();
+        ComponentType<EntityStore, DespawnComponent> despawnType = DespawnComponent.getComponentType();
 
-        Query<EntityStore> query = Query.and(itemType, physicsType);
+        // Query for items that have DespawnComponent (naturally dropped items)
+        // This excludes admin-spawned items from entity tool which don't have DespawnComponent
+        Query<EntityStore> query = Query.and(itemType, despawnType);
 
         int[] count = {0};
         store.forEachChunk(query, (chunk, buffer) -> {
