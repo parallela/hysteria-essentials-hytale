@@ -1,0 +1,38 @@
+$C = "../Common.ui";
+
+$C.@PageOverlay {
+  $C.@Container {
+    Anchor: (Width: 600, Height: 450);
+
+    #Title {
+      Group {
+        $C.@Title {
+          @Text = "Vote Chest Basket Rewards";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Left;
+
+      Group #Main {
+        LayoutMode: Top;
+
+        Group #RewardList {
+          Anchor: (Width: 580);
+          FlexWeight: 1;
+          LayoutMode: TopScrolling;
+          Padding: (Left: 4);
+          ScrollbarStyle: $C.@DefaultScrollbarStyle;
+
+          Group #RewardCards {
+            LayoutMode: Top;
+          }
+        }
+      }
+    }
+  }
+}
+
+$C.@BackButton {}
+

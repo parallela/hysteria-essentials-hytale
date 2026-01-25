@@ -1,0 +1,40 @@
+$C = "../Common.ui";
+Button {
+  LayoutMode: Top;
+  Anchor: (Left: 2, Right: 2, Bottom: 5, Height: 80, Width: 180);
+  Background: $C.@InputBoxBackground;
+  Padding: (Top: 8, Bottom: 8);
+  Style: ButtonStyle(
+    Sounds: $C.@ButtonSounds,
+  );
+
+  Label #RewardName {
+    Style: (
+      FontSize: 16,
+      RenderBold: true,
+      TextColor: #e6cc80,
+      HorizontalAlignment: Center
+    );
+  }
+
+  Label #Quantity {
+    Style: (
+      FontSize: 12,
+      TextColor: #80c8ff,
+      HorizontalAlignment: Center
+    );
+    Anchor: (Top: 4);
+  }
+
+  Label #Chance {
+    Style: (
+      FontSize: 10,
+      TextColor: #b0b0b0,
+      HorizontalAlignment: Center
+    );
+    Anchor: (Top: 8);
+  }
+}
+
+
+
