@@ -14,7 +14,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 public class ChatManager {
     private static final String COLOR_PERMISSION = "essentials.chat.color";
-    private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("&[0-9a-fA-F]|&#[0-9a-fA-F]{6}");
+    // Matches color codes (&0-&f, &#RRGGBB) and formatting codes (&l, &r)
+    private static final Pattern FORMAT_CODE_PATTERN = Pattern.compile("&[0-9a-fA-FlLrR]|&#[0-9a-fA-F]{6}");
     private final ConfigManager configManager;
     public ChatManager(@Nonnull ConfigManager configManager) {
         this.configManager = configManager;
@@ -60,9 +61,12 @@ public class ChatManager {
 
         return "";
     }
+    /**
+     * Strips color codes (&0-&f, &#RRGGBB) and formatting codes (&l, &r) from a string.
+     */
     @Nonnull
     private String stripColorCodes(@Nonnull String text) {
-        return COLOR_CODE_PATTERN.matcher(text).replaceAll("");
+        return FORMAT_CODE_PATTERN.matcher(text).replaceAll("");
     }
     @Nonnull
     private String getFormatForPlayer(@Nonnull UUID playerUuid) {
