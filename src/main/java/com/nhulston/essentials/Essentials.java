@@ -35,7 +35,7 @@ import com.nhulston.essentials.events.BuildProtectionEvent;
 import com.nhulston.essentials.events.ChatEvent;
 import com.nhulston.essentials.events.DeathLocationEvent;
 import com.nhulston.essentials.events.ItemClearEvent;
-import com.nhulston.essentials.events.JoinLeaveMessageEvent;
+import com.nhulston.essentials.events.JoinLeaveEvent;
 import com.nhulston.essentials.events.MotdEvent;
 import com.nhulston.essentials.events.PersonalBenchProtectionEvent;
 import com.nhulston.essentials.events.PlayerQuitEvent;
@@ -53,7 +53,7 @@ import com.nhulston.essentials.util.Log;
 import com.nhulston.essentials.util.VersionChecker;
 import javax.annotation.Nonnull;
 public class Essentials extends JavaPlugin {
-    public static final String VERSION = "1.5.5";
+    public static final String VERSION = "1.6.0";
     private static Essentials instance;
     private ConfigManager configManager;
     private StorageManager storageManager;
@@ -160,7 +160,7 @@ public class Essentials extends JavaPlugin {
     }
 
     private void registerEvents() {
-        new JoinLeaveMessageEvent(configManager, storageManager).register(getEventRegistry());
+        new JoinLeaveEvent(configManager, storageManager).register(getEventRegistry());
         new ChatEvent(chatManager, antiSpamManager).register(getEventRegistry());
         new BuildProtectionEvent(configManager).register(getEntityStoreRegistry());
         new SpawnProtectionEvent(spawnProtectionManager).register(getEntityStoreRegistry());
@@ -186,6 +186,15 @@ public class Essentials extends JavaPlugin {
     public static Essentials getInstance() {
         return instance;
     }
+
+    /**
+     * Gets the storage manager.
+     */
+    @Nonnull
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
     public void reloadConfigs() {
         configManager.reload();
         kitManager.reload();

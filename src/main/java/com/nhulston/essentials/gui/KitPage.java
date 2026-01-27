@@ -23,6 +23,7 @@ import com.nhulston.essentials.managers.KitManager;
 import com.nhulston.essentials.models.Kit;
 import com.nhulston.essentials.models.KitItem;
 import com.nhulston.essentials.util.CooldownUtil;
+import com.nhulston.essentials.util.Log;
 import com.nhulston.essentials.util.Msg;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -122,10 +123,17 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.KitPageData> {
             inventory.clear();
         }
         for (KitItem kitItem : kit.getItems()) {
-            ItemStack itemStack = new ItemStack(kitItem.itemId(), kitItem.quantity());
-            ItemStack remainder = addItemWithOverflow(inventory, kitItem, itemStack);
-            if (remainder != null && !remainder.isEmpty()) {
-                ItemUtils.dropItem(ref, remainder, store);
+            try {
+                ItemStack itemStack = new ItemStack(kitItem.itemId(), kitItem.quantity());
+                ItemStack remainder = addItemWithOverflow(inventory, kitItem, itemStack);
+
+                // Drop any overflow items on the ground
+                if (remainder != null && !remainder.isEmpty()) {
+                    ItemUtils.dropItem(ref, remainder, store);
+                }
+            } catch (Exception e) {
+                // Log warning for invalid item IDs (e.g., item doesn't exist in registry)
+                Log.warning("Kit '" + kit.getId() + "' contains invalid item: " + kitItem.itemId() + " - " + e.getMessage());
             }
         }
     }

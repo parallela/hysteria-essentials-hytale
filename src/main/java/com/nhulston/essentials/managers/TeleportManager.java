@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.nhulston.essentials.util.ConfigManager;
 import com.nhulston.essentials.util.Log;
 import com.nhulston.essentials.util.Msg;
+import com.nhulston.essentials.util.SoundUtil;
 import com.nhulston.essentials.util.TeleportUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TeleportManager {
     private static final String BYPASS_PERMISSION = "essentials.teleport.bypass";
     private static final double CANCEL_DISTANCE = 2.0;
+    private static final String TELEPORT_SOUND = "SFX_Portal_Neutral_Teleport_Local";
+
     private final ConfigManager configManager;
     private final ConcurrentHashMap<UUID, PendingTeleport> pendingTeleports = new ConcurrentHashMap<>();
     public TeleportManager(@Nonnull ConfigManager configManager) {
@@ -53,6 +56,7 @@ public class TeleportManager {
             if (error != null) {
                 Msg.fail(playerRef, error);
             } else {
+                SoundUtil.playSound(playerRef, TELEPORT_SOUND);
                 if (successMessage != null) {
                     Msg.success(playerRef, successMessage);
                 }
@@ -80,6 +84,7 @@ public class TeleportManager {
         int delay = configManager.getTeleportDelay();
         if (delay <= 0 || PermissionsModule.get().hasPermission(playerUuid, BYPASS_PERMISSION)) {
             TeleportUtil.teleportToPlayer(playerRef, targetPlayer);
+            SoundUtil.playSound(playerRef, TELEPORT_SOUND);
             if (successMessage != null) {
                 Msg.success(playerRef, successMessage);
             }
@@ -135,6 +140,7 @@ public class TeleportManager {
                 if (error != null) {
                     Msg.fail(pending.getPlayerRef(), error);
                 } else {
+                    SoundUtil.playSound(pending.getPlayerRef(), TELEPORT_SOUND);
                     if (pending.getSuccessMessage() != null) {
                         Msg.success(pending.getPlayerRef(), pending.getSuccessMessage());
                     }

@@ -26,11 +26,18 @@ public class ConfigManager {
     private static final int DEFAULT_TELEPORT_DELAY = 3;
     private static final int DEFAULT_RTP_COOLDOWN = 21600; // 6 hours in seconds
     private static final Pattern SECTION_PATTERN = Pattern.compile("^\\[([a-zA-Z0-9_.-]+)]\\s*$");
+
+    /**
+     * Represents a chat format configuration entry with group name and format string.
+     * Used to maintain ordering of chat formats for priority-based matching.
+     */
+    public record ChatFormat(@Nonnull String group, @Nonnull String format) {}
+
     private final Path configPath;
     private final HashMap<String, Integer> homeLimits = new HashMap<>();
     private boolean chatEnabled = true;
     private String chatFallbackFormat = DEFAULT_CHAT_FORMAT;
-    private final LinkedHashMap<String, String> chatFormats = new LinkedHashMap<>();
+    private volatile List<ChatFormat> chatFormats = List.of();
     private boolean disableBuilding = false;
     private boolean firstJoinSpawnEnabled = true;
     private boolean everyJoinSpawnEnabled = false;
@@ -124,15 +131,20 @@ public class ConfigManager {
             }
             chatEnabled = config.getBoolean("chat.enabled", () -> true);
             chatFallbackFormat = config.getString("chat.fallback-format", () -> DEFAULT_CHAT_FORMAT);
-            chatFormats.clear();
+
+            // Load chat formats (preserve order for priority)
             TomlTable formatsTable = config.getTable("chat.formats");
             if (formatsTable != null) {
+                List<ChatFormat> formats = new ArrayList<>();
                 for (String group : formatsTable.keySet()) {
                     String format = formatsTable.getString(group);
                     if (format != null) {
-                        chatFormats.put(group.toLowerCase(), format);
+                        formats.add(new ChatFormat(group.toLowerCase(), format));
                     }
                 }
+                chatFormats = List.copyOf(formats);
+            } else {
+                chatFormats = List.of();
             }
             disableBuilding = config.getBoolean("build.disable-building", () -> false);
             firstJoinSpawnEnabled = config.getBoolean("spawn.first-join", () -> true);
@@ -373,7 +385,7 @@ public class ConfigManager {
         return chatFallbackFormat;
     }
     @Nonnull
-    public Map<String, String> getChatFormats() {
+    public List<ChatFormat> getChatFormats() {
         return chatFormats;
     }
     public boolean isBuildingDisabled() {
