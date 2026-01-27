@@ -62,7 +62,11 @@ public class SpawnProtectionEvent {
             if (!manager.isEnabled() || event.isCancelled()) {
                 return;
             }
-            if (!manager.isInProtectedArea(event.getTargetBlock())) {
+
+            // Get current world name
+            String worldName = store.getExternalData().getWorld().getName();
+
+            if (!manager.isInProtectedArea(worldName, event.getTargetBlock())) {
                 return;
             }
             PlayerRef playerRef = chunk.getComponent(index, PlayerRef.getComponentType());
@@ -92,7 +96,11 @@ public class SpawnProtectionEvent {
             if (!manager.isEnabled() || event.isCancelled()) {
                 return;
             }
-            if (!manager.isInProtectedArea(event.getTargetBlock())) {
+
+            // Get current world name
+            String worldName = store.getExternalData().getWorld().getName();
+
+            if (!manager.isInProtectedArea(worldName, event.getTargetBlock())) {
                 return;
             }
             PlayerRef playerRef = chunk.getComponent(index, PlayerRef.getComponentType());
@@ -122,7 +130,11 @@ public class SpawnProtectionEvent {
             if (!manager.isEnabled() || event.isCancelled()) {
                 return;
             }
-            if (!manager.isInProtectedArea(event.getTargetBlock())) {
+
+            // Get current world name
+            String worldName = store.getExternalData().getWorld().getName();
+
+            if (!manager.isInProtectedArea(worldName, event.getTargetBlock())) {
                 return;
             }
             PlayerRef playerRef = chunk.getComponent(index, PlayerRef.getComponentType());
@@ -158,7 +170,11 @@ public class SpawnProtectionEvent {
             if (victimRef == null) {
                 return;
             }
-            if (!manager.isInProtectedArea(victimRef.getTransform().getPosition())) {
+
+            // Get current world name
+            String worldName = store.getExternalData().getWorld().getName();
+
+            if (!manager.isInProtectedArea(worldName, victimRef.getTransform().getPosition())) {
                 return;
             }
             Damage.Source source = event.getSource();
