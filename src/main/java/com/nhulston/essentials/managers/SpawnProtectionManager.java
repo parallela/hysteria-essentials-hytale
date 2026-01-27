@@ -21,11 +21,23 @@ public class SpawnProtectionManager {
     public boolean isInvulnerableEnabled() {
         return configManager.isSpawnProtectionInvulnerable();
     }
-    public boolean isInProtectedArea(@Nonnull Vector3i blockPos) {
+
+    /**
+     * Checks if a block position is within the protected spawn area.
+     * @param worldName The world name to check against
+     * @param blockPos The block position to check
+     */
+    public boolean isInProtectedArea(@Nonnull String worldName, @Nonnull Vector3i blockPos) {
         Spawn spawn = storageManager.getSpawn();
         if (spawn == null) {
             return false;
         }
+
+        // Check if we're in the correct world
+        if (!spawn.getWorld().equals(worldName)) {
+            return false;
+        }
+
         int radius = configManager.getSpawnProtectionRadius();
         double dx = Math.abs(blockPos.getX() - spawn.getX());
         double dz = Math.abs(blockPos.getZ() - spawn.getZ());
@@ -34,11 +46,23 @@ public class SpawnProtectionManager {
         }
         return isInYRange(blockPos.getY());
     }
-    public boolean isInProtectedArea(@Nonnull Vector3d entityPos) {
+
+    /**
+     * Checks if an entity position is within the protected spawn area.
+     * @param worldName The world name to check against
+     * @param entityPos The entity position to check
+     */
+    public boolean isInProtectedArea(@Nonnull String worldName, @Nonnull Vector3d entityPos) {
         Spawn spawn = storageManager.getSpawn();
         if (spawn == null) {
             return false;
         }
+
+        // Check if we're in the correct world
+        if (!spawn.getWorld().equals(worldName)) {
+            return false;
+        }
+
         int radius = configManager.getSpawnProtectionRadius();
         double dx = Math.abs(entityPos.getX() - spawn.getX());
         double dz = Math.abs(entityPos.getZ() - spawn.getZ());
@@ -47,6 +71,7 @@ public class SpawnProtectionManager {
         }
         return isInYRange((int) entityPos.getY());
     }
+
     private boolean isInYRange(int y) {
         int minY = configManager.getSpawnProtectionMinY();
         int maxY = configManager.getSpawnProtectionMaxY();
